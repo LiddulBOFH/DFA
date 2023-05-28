@@ -29,7 +29,7 @@ function callfunc(ply,args) -- Set DFA G-Limit
 end
 cmdSettings = {
 	["Help"] = "Sets the G-Limit value for DFA.",
-	["MinimumPriviledge"] = 2,
+	["MinimumPrivilege"] = 2,
 	["RCONCanUse"] = true
 }
 BAdmin.Utilities.addCommand("dfa_glimit",callfunc,cmdSettings)
@@ -45,7 +45,7 @@ function callfunc(ply,args) -- Set DFA DamageMult
 end
 cmdSettings = {
 	["Help"] = "Sets the DamageMult value for DFA.",
-	["MinimumPriviledge"] = 2,
+	["MinimumPrivilege"] = 2,
 	["RCONCanUse"] = true
 }
 BAdmin.Utilities.addCommand("dfa_dmgmult",callfunc,cmdSettings)

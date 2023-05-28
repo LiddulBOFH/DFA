@@ -19,8 +19,8 @@ if SERVER then
             - Pass false to disable damage for this particular event
     ]]
 
-    GLimit = CreateConVar("dfa_glimit",3,FCVAR_ARCHIVE,"How many Gs a player can pull before taking damage",1)
-    DamageMult = CreateConVar("dfa_damagemult",1,FCVAR_ARCHIVE,"A multiplier to the amount of damage the player takes when exceeding G-limits",0.1)
+    GLimit = CreateConVar("dfa_glimit",3,FCVAR_ARCHIVE + FCVAR_REPLICATED,"How many Gs a player can pull before taking damage",1)
+    DamageMult = CreateConVar("dfa_damagemult",1,FCVAR_ARCHIVE + FCVAR_REPLICATED,"A multiplier to the amount of damage the player takes when exceeding G-limits",0.1)
 
     local GLimitF = GLimit:GetFloat() ^ 2
     local DMult = DamageMult:GetFloat()
@@ -153,11 +153,16 @@ else -- Client
     local KO = false
     local HighestForce = 0
 
+    local GLimitCL = CreateClientConVar("dfa_glimit", 3, false, false, "Replicated value for DFA G-Limit")
+    local DmgMultCL = CreateClientConVar("dfa_damagemult", 1, false, false, "Replicated value for DFA Damage Multiplication")
+
     hook.Add("Think","DFA_Think",function()
         local time = math.max(1 / 66, RealFrameTime())
         local gforce = math.min(LocalPlayer():GetNWFloat("DFA-G",0),1)
+
         HighestForce = math.max(gforce,HighestForce)
         KO = LocalPlayer():GetNWBool("DFA-KO",false)
+
         if KO then gforce = 1 end
         fade = fade + (HighestForce - fade) * time * 0.4
         HighestForce = HighestForce + (0 - HighestForce) * time * 0.5
@@ -191,6 +196,12 @@ else -- Client
         cmd:SetMouseX(0)
         cmd:SetMouseY(0)
         return true
+    end)
+
+    concommand.Add("dfa_check",function(ply) -- If you seek to remove this command, then your server must be a shithole. Shame on you.
+        MsgN("+ DFA Values")
+        MsgN("| DFA G-Limit: " .. math.Round(GLimitCL:GetFloat(),4) .. ", " .. (math.Round(GLimitCL:GetFloat() / 1,2) * 100) .. "% of normal value (1)")
+        MsgN("| DFA Damage Mult: " .. math.Round(DmgMultCL:GetFloat(),4) .. ", " .. (math.Round(DmgMultCL:GetFloat() / 3,2) * 100) .. "% of normal value (3)")
     end)
 end
 
